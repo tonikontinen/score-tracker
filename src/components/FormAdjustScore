@@ -1,0 +1,36 @@
+import { useState } from "react";
+import Button from "./Button";
+
+export default function FormAdjustScore({ selectedCharacter, onAdjustScore }) {
+  const [value, setValue] = useState("");
+  const [direction, setDirection] = useState("gain");
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!value) return;
+
+    onAdjustScore(direction === "gain" ? Number(value) : -Number(value));
+    setValue("");
+  }
+
+  return (
+    <form className="form-adjust-score" onSubmit={handleSubmit}>
+      <h2>Adjust Score for {selectedCharacter.name}</h2>
+
+      <label>Points</label>
+      <input
+        type="number"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+
+      <label>Type</label>
+      <select value={direction} onChange={(e) => setDirection(e.target.value)}>
+        <option value="gain">Gain</option>
+        <option value="lose">Lose</option>
+      </select>
+
+      <Button>Apply</Button>
+    </form>
+  );
+}

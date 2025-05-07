@@ -1,0 +1,36 @@
+import { useState } from "react";
+import Button from "./Button";
+
+export default function FormAddCharacter({ onAddCharacter }) {
+  const [name, setName] = useState("");
+  const [avatar, setAvatar] = useState("https://i.pravatar.cc/48");
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!name || !avatar) return;
+
+    const id = crypto.randomUUID();
+    const newCharacter = {
+      id,
+      name,
+      avatar: `${avatar}?u=${id}`,
+      score: 0,
+    };
+
+    onAddCharacter(newCharacter);
+    setName("");
+    setAvatar("https://i.pravatar.cc/48");
+  }
+
+  return (
+    <form className="form-add-character" onSubmit={handleSubmit}>
+      <label>Name</label>
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+
+      <label>Avatar URL</label>
+      <input value={avatar} onChange={(e) => setAvatar(e.target.value)} />
+
+      <Button>Add</Button>
+    </form>
+  );
+}

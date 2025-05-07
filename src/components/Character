@@ -1,0 +1,20 @@
+import Button from "./Button";
+
+export default function Character({ character, selectedCharacter, onSelectCharacter }) {
+  const isSelected = selectedCharacter?.id === character.id;
+
+  return (
+    <li className={isSelected ? "selected" : ""}>
+      <img src={character.avatar} alt={character.name} />
+      <h3>{character.name}</h3>
+      <p className={character.score > 0 ? "green" : character.score < 0 ? "red" : ""}>
+        {character.score === 0
+          ? "Even score"
+          : `${Math.abs(character.score)} pts`}
+      </p>
+      <Button onClick={() => onSelectCharacter(character)}>
+        {isSelected ? "Close" : "Select"}
+      </Button>
+    </li>
+  );
+}

@@ -1,0 +1,16 @@
+import Character from "./Character";
+
+export default function CharacterList({ characters, onSelectCharacter, selectedCharacter }) {
+  return (
+    <ul>
+      {characters.map((character) => (
+        <Character
+          key={character.id}
+          character={character}
+          selectedCharacter={selectedCharacter}
+          onSelectCharacter={onSelectCharacter}
+        />
+      ))}
+    </ul>
+  );
+}
