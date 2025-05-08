@@ -2,21 +2,21 @@ import { useState } from "react";
 import "./styles.css";
 
 function App() {
+  const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [characters, setCharacters] = useState([
     {
       id: 1,
       name: "Lora",
       avatar: "https://i.pravatar.cc/48?u=knight",
-      score: 10,
+      score: 0,
     },
     {
       id: 2,
       name: "Kenzo",
       avatar: "https://i.pravatar.cc/48?u=wizard",
-      score: -5,
+      score: 0,
     },
   ]);
-  const [selectedCharacter, setSelectedCharacter] = useState(null);
 
   function handleSelect(char) {
     setSelectedCharacter((current) => (current?.id === char.id ? null : char));
@@ -33,6 +33,27 @@ function App() {
     setSelectedCharacter(null);
   }
 
+  function handleAddCharacter(newChar) {
+    setCharacters((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        name: newChar.name,
+        avatar:
+          newChar.avatar ||
+          `https://i.pravatar.cc/48?u=${newChar.name.toLowerCase()}`,
+        score: 0,
+      },
+    ]);
+  }
+
+  function handleDeleteCharacter(id) {
+    setCharacters((chars) => chars.filter((char) => char.id != id));
+    if (selectedCharacter?.id === id) {
+      setSelectedCharacter(null);
+    }
+  }
+
   return (
     <div>
       <h1>Score Tracker</h1>
@@ -41,7 +62,10 @@ function App() {
         characters={characters}
         selectedCharacter={selectedCharacter}
         onSelect={handleSelect}
+        onDelete={handleDeleteCharacter}
       />
+
+      <AddCharacterForm onAdd={handleAddCharacter} />
 
       {selectedCharacter && (
         <div style={{ marginTop: "2rem" }}>
@@ -59,8 +83,7 @@ function App() {
   );
 }
 
-// CharacterItem Component
-function CharacterItem({ char, isSelected, onSelect }) {
+function CharacterItem({ char, isSelected, onSelect, onDelete }) {
   return (
     <li>
       <div className="character">
@@ -71,13 +94,19 @@ function CharacterItem({ char, isSelected, onSelect }) {
           <button onClick={() => onSelect(char)}>
             {isSelected ? "Close" : "Select"}
           </button>
+          <button
+            onClick={() => onDelete(char.id)}
+            style={{ marginLeft: "0.5rem" }}
+          >
+            Delete
+          </button>
         </div>
       </div>
     </li>
   );
 }
 
-function CharacterList({ characters, selectedCharacter, onSelect }) {
+function CharacterList({ characters, selectedCharacter, onSelect, onDelete }) {
   return (
     <ul>
       {characters.map((char) => (
@@ -86,6 +115,7 @@ function CharacterList({ characters, selectedCharacter, onSelect }) {
           char={char}
           isSelected={selectedCharacter?.id === char.id}
           onSelect={onSelect}
+          onDelete={onDelete}
         />
       ))}
     </ul>
@@ -114,6 +144,40 @@ function ScoreAdjustForm({ character, onAdjust }) {
         />
       </label>
       <button type="submit">Apply</button>
+    </form>
+  );
+}
+
+function AddCharacterForm({ onAdd }) {
+  const [name, setName] = useState("");
+  const [avatar, setAvatar] = useState("");
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!name.trim()) return;
+    onAdd({ name: name.trim(), avatar: avatar.trim() });
+    setName("");
+    setAvatar("");
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{ marginTop: "2rem" }}>
+      <h2>Add a new character</h2>
+      <label>
+        Name:{" "}
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+      </label>
+      <br />
+      <label>
+        Avatar URL (optional):{" "}
+        <input value={avatar} onChange={(e) => setAvatar(e.target.value)} />
+      </label>
+      <br />
+      <button type="submit">Add character</button>
     </form>
   );
 }
