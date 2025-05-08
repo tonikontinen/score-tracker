@@ -1,22 +1,28 @@
 import { useState } from "react";
 import "./styles.css";
+import { useEffect } from "react";
 
 function App() {
   const [selectedCharacter, setSelectedCharacter] = useState(null);
-  const [characters, setCharacters] = useState([
-    {
-      id: 1,
-      name: "Lora",
-      avatar: "https://i.pravatar.cc/48?u=knight",
-      score: 0,
-    },
-    {
-      id: 2,
-      name: "Kenzo",
-      avatar: "https://i.pravatar.cc/48?u=wizard",
-      score: 0,
-    },
-  ]);
+  const [characters, setCharacters] = useState(() => {
+    const stored = localStorage.getItem("score-tracker-characters");
+    return stored
+      ? JSON.parse(stored)
+      : [
+          {
+            id: 1,
+            name: "Lora",
+            avatar: "https://i.pravatar.cc/48?u=knight",
+            score: 0,
+          },
+          {
+            id: 2,
+            name: "Kenzo",
+            avatar: "https://i.pravatar.cc/48?u=wizard",
+            score: 0,
+          },
+        ];
+  });
 
   function handleSelect(char) {
     setSelectedCharacter((current) => (current?.id === char.id ? null : char));
@@ -53,6 +59,13 @@ function App() {
       setSelectedCharacter(null);
     }
   }
+
+  useEffect(() => {
+    localStorage.setItem(
+      "score-tracker-characters",
+      JSON.stringify(characters)
+    );
+  }, [characters]);
 
   return (
     <div>
